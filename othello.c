@@ -6,6 +6,7 @@
 
 #include "othello.h"
 
+
 // Constructs and returns a string representation of the board
 char *toString(int size, char board[][size])
 {
@@ -35,13 +36,108 @@ char *toString(int size, char board[][size])
 // Initializes the board with start configuration of discs (see project specs)
 void initializeBoard(int size, char board[][size])
 {
-	// COMPLETE THIS FUNCTION
+	for(int i = 0; i < size; i++) {
+		for(int j = 0; j < size; j++) {
+			board[i][j] = EMPTY;
+		}
+	}
+	//Init starting board discs (SIZE = 8 ONLY)
+	board[size/2 - 1][size/2 - 1] = BLACK;
+	board[size/2 - 1][size/2] = WHITE;
+	board[size/2][size/2 - 1] = WHITE;
+	board[size/2][size/2] = BLACK;
+
 }
 
 // Returns true if moving the disc to location row,col is valid; false otherwise
 bool isValidMove(int size, char board[][size], int row, int col, char disc)
 {
-	return true;	// REPLACE THIS WITH YOUR IMPLEMENTATION
+	//condition that checks if the tile is already 'full'
+	if(board[row][col] != '-') {
+		return false;
+	}
+	//Check up side of opposite disc
+	if(col - 1 >= 0) {
+		if(board[row][col] == EMPTY) {
+			int i = col - 1;
+			while(i >= 0) {
+				if(board[row][i] != EMPTY) {
+					if(board[row][i] == disc) {
+						return true;
+					}
+				} else {
+					i = 0;
+				}
+				i--;
+			}	
+		}
+	}
+	//FIXME: UP DOWN LOOPS
+	//Check right side 
+        if(row + 1 >= 0) {
+                if(board[row][col] == EMPTY) {
+                        int i = col + 1;
+                        while(i <= 8) {
+                                if(board[row][i] != EMPTY) {
+                                        if(board[row][i] == disc) {
+                                                return true;
+                                        }
+                                } else {
+                                        i = 0;
+                                }
+                                i++;
+                        }       
+                }
+        }
+        //Check up side for opposite disc
+        if(row - 1 >= 0) {
+                if(board[row][col] == EMPTY) {
+                        int i = row - 1;
+                        while(i >= 0) {
+                                if(board[i][col] != EMPTY) {
+                                        if(board[i][col] == disc) {
+                                                return true;
+                                        }
+                                } else {
+                                        i = 0;
+                                }
+                                i--;
+                        }       
+                }
+        }
+
+
+	//Check up for opposite disc
+	if(row - 1 >= 0) {
+		if(board[row-1][col] != EMPTY && board[row-1][col] != disc) {
+			//Potential move found on up side
+		}
+	}
+	//Check down for opposite disc
+	if(row + 1 <= 8) {
+		if(board[row+1][col] != EMPTY && board[row+1][col] != disc) {
+			//Potential move found on down side
+		}
+	}
+	//Check UP LEFT
+	if(board[row-1][col-1] != EMPTY && board[row-1][col-1] != disc) {
+		//Potential move found UP LEFT
+	}
+	//Check UP RIGHT
+	if(board[row-1][col+1] != EMPTY && board[row-1][col-1] != disc) {
+                //Potential move found UP LEFT
+        }
+	//Check DOWN LEFT
+	if(board[row+1][col-1] != EMPTY && board[row-1][col-1] != disc) {
+                //Potential move found UP LEFT
+        }
+	//Check DOWN RIGHT
+	if(board[row+1][col-1] != EMPTY && board[row-1][col-1] != disc) {
+                //Potential move found UP LEFT
+        }
+
+	//Check recursively UP, DOWN, LEFT, RIGHT, and DIAGONALS(x|y || +|-)
+	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
 }
 
 // Places the disc at location row,col and flips the opponent discs as needed
@@ -49,9 +145,18 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 {
 	if (!isValidMove(size,board,row,col,disc)) {
 		return;
+	} else {
+		//Place requested piece by user if valid
+		board[row][col] = disc;
+		//Place recursive pieces matched by game logic
+		//Check left
+		//Check right
+		//Check up
+		//Check down
+		//Check diagonal UP left DOWN right '\'
+		//Check diagonal UP right DOWN left '/'
 	}
-
-	// COMPLETE REST OF THIS FUNCTION
+	
 }
 
 // Returns true if a valid move for disc is available; false otherwise
