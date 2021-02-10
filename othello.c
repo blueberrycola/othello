@@ -52,92 +52,135 @@ void initializeBoard(int size, char board[][size])
 // Returns true if moving the disc to location row,col is valid; false otherwise
 bool isValidMove(int size, char board[][size], int row, int col, char disc)
 {
+	//Keep row and col param vars unchanged
+	int origin_R = row;
+	int origin_C = col;
 	//condition that checks if the tile is already 'full'
-	if(board[row][col] != '-') {
+	if(board[row][col] != EMPTY) {
 		return false;
 	}
-	//Check up side of opposite disc
-	if(col - 1 >= 0) {
-		if(board[row][col] == EMPTY) {
-			int i = col - 1;
-			while(i >= 0) {
-				if(board[row][i] != EMPTY) {
-					if(board[row][i] == disc) {
-						return true;
-					}
-				} else {
-					i = 0;
-				}
-				i--;
-			}	
+	//Check each direction for potential moves {N, E, S, W, NE, NW, SE, SW}
+	bool oppositedisc = false;
+	bool matchingdisc = false;
+	//Left check
+	for(int a = col; a >= 0; a--) {
+		if(board[row][a] != disc && !matchingdisc) {
+			oppositedisc = true;
+		}
+		if(oppositedisc && board[row][a] == disc) {
+			matchingdisc = true;
+		}
+		if(oppositedisc && matchingdisc) {
+			return true;
+		}
+		
+	}
+	//Right check
+	oppositedisc = false;
+	matchingdisc = false;
+	for(int b = col; b <= size; b++) {
+		if(board[row][b] != disc && !matchingdisc) {
+			oppositedisc = true;
+		}
+		if(oppositedisc && board[row][b] == disc) {
+			matchingdisc = true;
+		}
+		if(oppositedisc && matchingdisc) {
+			return true;
 		}
 	}
-	//FIXME: UP DOWN LOOPS
-	//Check right side 
-        if(row + 1 >= 0) {
-                if(board[row][col] == EMPTY) {
-                        int i = col + 1;
-                        while(i <= 8) {
-                                if(board[row][i] != EMPTY) {
-                                        if(board[row][i] == disc) {
-                                                return true;
-                                        }
-                                } else {
-                                        i = 0;
-                                }
-                                i++;
-                        }       
-                }
-        }
-        //Check up side for opposite disc
-        if(row - 1 >= 0) {
-                if(board[row][col] == EMPTY) {
-                        int i = row - 1;
-                        while(i >= 0) {
-                                if(board[i][col] != EMPTY) {
-                                        if(board[i][col] == disc) {
-                                                return true;
-                                        }
-                                } else {
-                                        i = 0;
-                                }
-                                i--;
-                        }       
-                }
-        }
-
-
-	//Check up for opposite disc
-	if(row - 1 >= 0) {
-		if(board[row-1][col] != EMPTY && board[row-1][col] != disc) {
-			//Potential move found on up side
+	//Up check
+	oppositedisc = false;
+	matchingdisc = false;
+	for(int c = row; c >= 0; c--) {
+		if(board[c][col] != disc && !matchingdisc) {
+			oppositedisc = true;
+		}
+		if(oppositedisc && board[c][col] == disc) {
+			matchingdisc = true;
+		}
+		if(oppositedisc && matchingdisc) {
+			return true;
 		}
 	}
-	//Check down for opposite disc
-	if(row + 1 <= 8) {
-		if(board[row+1][col] != EMPTY && board[row+1][col] != disc) {
-			//Potential move found on down side
+	//Down check
+	oppositedisc = false;
+	matchingdisc = false;
+	for(int d = row; d <= 8; d++) {
+		if(board[d][col] != disc && !matchingdisc) {
+			oppositedisc = true;
+		}
+		if(oppositedisc && board[d][col] == disc) {
+			matchingdisc = true;
+		}
+		if(oppositedisc && matchingdisc) {
+			return true;
 		}
 	}
-	//Check UP LEFT
-	if(board[row-1][col-1] != EMPTY && board[row-1][col-1] != disc) {
-		//Potential move found UP LEFT
+	//Backslash: +
+	oppositedisc = false;
+	matchingdisc = false;
+	for(int e = row; e <= 8; e++) {
+		for(int f = col; f <= 8; f++) {
+			if(board[d][col] != disc && !matchingdisc) {
+			oppositedisc = true;
+			}
+			if(oppositedisc && board[d][col] == disc) {
+				matchingdisc = true;
+			}
+			if(oppositedisc && matchingdisc) {
+				return true;
+			}
+		}
 	}
-	//Check UP RIGHT
-	if(board[row-1][col+1] != EMPTY && board[row-1][col-1] != disc) {
-                //Potential move found UP LEFT
-        }
-	//Check DOWN LEFT
-	if(board[row+1][col-1] != EMPTY && board[row-1][col-1] != disc) {
-                //Potential move found UP LEFT
-        }
-	//Check DOWN RIGHT
-	if(board[row+1][col-1] != EMPTY && board[row-1][col-1] != disc) {
-                //Potential move found UP LEFT
-        }
-
-	//Check recursively UP, DOWN, LEFT, RIGHT, and DIAGONALS(x|y || +|-)
-	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION
+	//Backslash: -
+	oppositedisc = false;
+	matchingdisc = false;
+	for(int g = row; g >= 0; g--) {
+		for(int h = col; h >= 0; h--) {
+			if(board[g][h] != disc && !matchingdisc) {
+			oppositedisc = true;
+			}
+			if(oppositedisc && board[g][h] == disc) {
+				matchingdisc = true;
+			}
+			if(oppositedisc && matchingdisc) {
+				return true;
+			}
+		}
+	}
+	//Forwardslash: +
+	oppositedisc = false;
+	matchingdisc = false;
+	for(int g = row; g >= 0; g--) {
+		for(int h = col; h <= 8; h++) {
+			if(board[g][h] != disc && !matchingdisc) {
+			oppositedisc = true;
+			}
+			if(oppositedisc && board[g][h] == disc) {
+				matchingdisc = true;
+			}
+			if(oppositedisc && matchingdisc) {
+				return true;
+			}
+		}
+	}
+	//Forwardslash: -
+	for(int i = row; i <= 8; i++) {
+		for(int j = col; j >= 0; j--) {
+			if(board[i][j] != disc && !matchingdisc) {
+			oppositedisc = true;
+			}
+			if(oppositedisc && board[i][j] == disc) {
+				matchingdisc = true;
+			}
+			if(oppositedisc && matchingdisc) {
+				return true;
+			}
+		}
+	}
+	//FIXME: TEST FUNC AND MAKE PLACE DISC
+	return false;
 }
 
 // Places the disc at location row,col and flips the opponent discs as needed
@@ -168,7 +211,14 @@ bool isValidMoveAvailable(int size, char board[][size], char disc)
 // Returns true if the board is fully occupied with discs; false otherwise
 bool isBoardFull(int size, char board[][size])
 {
-	return false;	// REPLACE THIS WITH YOUR IMPLEMENTATION	
+	for(int i = 0; i < size; i++) {
+		for(int j = 0; j < size; j++) {
+			if(board[i][j] == EMPTY) {
+				return false;
+			}
+		}
+	}
+	return true;	
 }
 
 // Returns true if either the board is full or a valid move is not available for either disc; false otherwise
