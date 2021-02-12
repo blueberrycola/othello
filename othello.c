@@ -48,23 +48,39 @@ void initializeBoard(int size, char board[][size])
 	board[size/2][size/2] = BLACK;
 
 }
-
-// Returns true if moving the disc to location row,col is valid; false otherwise
-bool isValidMove(int size, char board[][size], int row, int col, char disc)
-{
-	//Keep row and col param vars unchanged
-	int origin_R = row;
-	int origin_C = col;
-	//condition that checks if the tile is already 'full'
-	if(board[row][col] != EMPTY) {
-		return false;
-	}
-	//Check each direction for potential moves {N, E, S, W, NE, NW, SE, SW}
+/*
+	Static functions used for each direction for use in placeDiscAt() and isValidMove()
+	
+*/
+//Up direction
+static bool up_direction(int size, char board[][size], int row, int col, char disc) {
 	bool oppositedisc = false;
 	bool matchingdisc = false;
-	//Left check
+	for(int i = row; i >= 0; i--) {
+		if(board[i][col] == EMPTY && i != row) {
+			return false;
+		}
+		if(board[i][col] != disc && !matchingdisc && board[i][col] != EMPTY) {
+			oppositedisc = true;
+		}
+		if(oppositedisc && board[i][col] == disc) {
+			matchingdisc = true;
+		}
+		if(oppositedisc && matchingdisc) {
+			return true;
+		}
+	}
+	return false;
+}
+//Left direction
+static bool left_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
 	for(int a = col; a >= 0; a--) {
-		if(board[row][a] != disc && !matchingdisc) {
+		if(board[row][a] == EMPTY && a != col) {
+			return false;
+		}
+		if(board[row][a] != disc && !matchingdisc && board[row][a] != EMPTY) {
 			oppositedisc = true;
 		}
 		if(oppositedisc && board[row][a] == disc) {
@@ -75,39 +91,40 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 		}
 		
 	}
-	//Right check
-	oppositedisc = false;
-	matchingdisc = false;
+	return false;
+}
+//Right direction
+static bool right_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
+
 	for(int b = col; b <= size; b++) {
-		if(board[row][b] != disc && !matchingdisc) {
+		if(board[row][b] == EMPTY && b != col) {
+			return false;
+		}
+		
+		if(board[row][b] != disc && !matchingdisc && board[row][b] != EMPTY) {
 			oppositedisc = true;
 		}
 		if(oppositedisc && board[row][b] == disc) {
 			matchingdisc = true;
 		}
+		
 		if(oppositedisc && matchingdisc) {
 			return true;
 		}
 	}
-	//Up check
-	oppositedisc = false;
-	matchingdisc = false;
-	for(int c = row; c >= 0; c--) {
-		if(board[c][col] != disc && !matchingdisc) {
-			oppositedisc = true;
+	return false;
+}
+//Down directions
+static bool down_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
+	for(int d = row; d <= size; d++) {
+		if(board[d][col] == EMPTY && d != row) {
+			return false;
 		}
-		if(oppositedisc && board[c][col] == disc) {
-			matchingdisc = true;
-		}
-		if(oppositedisc && matchingdisc) {
-			return true;
-		}
-	}
-	//Down check
-	oppositedisc = false;
-	matchingdisc = false;
-	for(int d = row; d <= 8; d++) {
-		if(board[d][col] != disc && !matchingdisc) {
+		if(board[d][col] != disc && !matchingdisc && board[d][col] != EMPTY) {
 			oppositedisc = true;
 		}
 		if(oppositedisc && board[d][col] == disc) {
@@ -117,25 +134,37 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 			return true;
 		}
 	}
-	//Backslash: +
-	oppositedisc = false;
-	matchingdisc = false;
-	for(int e = row; e <= 8; e++) {
-		for(int f = col; f <= 8; f++) {
-			if(board[d][col] != disc && !matchingdisc) {
-			oppositedisc = true;
-			}
-			if(oppositedisc && board[d][col] == disc) {
-				matchingdisc = true;
-			}
-			if(oppositedisc && matchingdisc) {
-				return true;
-			}
+	return false;
+}
+//Backslash +
+static bool backsl_plus_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
+	bool stopcondition = false;
+	int f = col;
+	for(int e = row; !stopcondition; e++) {
+		if(e <= size || f >= 0) {
+			stopcondition = true;
+			break;
 		}
+		if(board[e][f] != disc && !matchingdisc) {
+			oppositedisc = true;
+		}
+		if(oppositedisc && board[e][f] == disc) {
+			matchingdisc = true;
+		}
+		if(oppositedisc && matchingdisc) {
+			return true;
+		}
+		f++;
+		
 	}
-	//Backslash: -
-	oppositedisc = false;
-	matchingdisc = false;
+	return false;
+}
+//Backslash -
+static bool backsl_neg_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
 	for(int g = row; g >= 0; g--) {
 		for(int h = col; h >= 0; h--) {
 			if(board[g][h] != disc && !matchingdisc) {
@@ -149,9 +178,12 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 			}
 		}
 	}
-	//Forwardslash: +
-	oppositedisc = false;
-	matchingdisc = false;
+	return false;
+}
+//Forwardslash +
+static bool forsl_plus_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
 	for(int g = row; g >= 0; g--) {
 		for(int h = col; h <= 8; h++) {
 			if(board[g][h] != disc && !matchingdisc) {
@@ -165,10 +197,16 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 			}
 		}
 	}
-	//Forwardslash: -
+	return false;
+}
+//Forwardslash -
+static bool forsl_neg_direction(int size, char board[][size], int row, int col, char disc) {
+	bool oppositedisc = false;
+	bool matchingdisc = false;
 	for(int i = row; i <= 8; i++) {
 		for(int j = col; j >= 0; j--) {
-			if(board[i][j] != disc && !matchingdisc) {
+			
+			if(board[i][j] != disc && !matchingdisc && board[i][j] != EMPTY) {
 			oppositedisc = true;
 			}
 			if(oppositedisc && board[i][j] == disc) {
@@ -179,7 +217,61 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 			}
 		}
 	}
-	//FIXME: TEST FUNC AND MAKE PLACE DISC
+	return false;
+}
+
+
+// Returns true if moving the disc to location row,col is valid; false otherwise
+bool isValidMove(int size, char board[][size], int row, int col, char disc)
+{
+	
+	//condition that checks if the tile is already 'full'
+	if(board[row][col] != EMPTY) {
+		return false;
+	}
+	//Use static direction functions to check if a valid move is available at row, col
+	if(left_direction(size, board, row, col, disc)) {
+		printf("I got my diamond tester...ICE\n");
+		return true;
+	}
+	//Right check
+	if(right_direction(size, board, row, col, disc)) {
+		printf("I got my qmond tester...ICE\n");
+		return true;
+	}
+	//Up check
+	if(up_direction(size, board, row, col, disc)) {
+		printf("I got my dgdmond tester...ICE\n");
+		return true;
+	}
+	//Down check
+	if(down_direction(size, board, row, col, disc)) {
+		printf("I got my ddsmond tester...ICE\n");
+		return true;
+	}
+	/*
+	//Backslash: +
+	if(backsl_plus_direction(size, board, row, col, disc)) {
+		printf("I got my dfdond tester...ICE\n");
+		return true;
+	}
+	//Backslash: -
+	if(backsl_neg_direction(size, board, row, col, disc)) {
+		printf("I got my didsfaond tester...ICE\n");
+		return true;
+	}
+	//Forwardslash: +
+	if(forsl_plus_direction(size, board, row, col, disc)) {
+		printf("I got my diaSGnd tester...ICE\n");
+		return true;
+	}
+	//FIXME: FORSLASHNEG
+	Forwardslash: -
+	if(forsl_neg_direction(size, board, row, col, disc)) {
+		printf("I got my SHmond tester...ICE\n");
+		return true;
+	} */
+	
 	return false;
 }
 
@@ -191,13 +283,90 @@ void placeDiscAt(int size, char board[][size], int row, int col, char disc)
 	} else {
 		//Place requested piece by user if valid
 		board[row][col] = disc;
-		//Place recursive pieces matched by game logic
-		//Check left
-		//Check right
-		//Check up
-		//Check down
-		//Check diagonal UP left DOWN right '\'
-		//Check diagonal UP right DOWN left '/'
+		//Check each direction and find what directions must be 'flipped'
+		if(left_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			bool done = false;
+			int i = col - 1;
+			while(!done || i <=0) {
+				if(board[row][i] == disc) {
+					done = true;
+				} else {
+					board[row][i] = disc;
+				}
+				i--;
+				
+			}
+			
+		}
+		//Right check
+		if(right_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			bool done = false;
+			int i = col + 1;
+			while(!done || i >= size) {
+				if(board[row][i] == disc) {
+					done = true;
+				} else {
+					board[row][i] = disc;
+				}
+				i++;
+				
+			}
+		}
+		//Up check
+		if(up_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			bool done = false;
+			int i = row - 1;
+			while(!done || i <= 0) {
+				if(board[i][col] == disc) {
+					done = true;
+				} else {
+					board[i][col] = disc;
+				}
+				i--;
+				
+			}
+		}
+		//Down check
+		if(down_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			bool done = false;
+			int i = row + 1;
+			while(!done || i >= size) {
+				if(board[i][col] == disc) {
+					done = true;
+				} else {
+					board[i][col] = disc;
+				}
+				i++;
+				
+			}
+		}
+		//Backslash: +
+		if(backsl_plus_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			
+		}
+		//Backslash: -
+		if(backsl_neg_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			
+		}
+		//Forwardslash: +
+		if(forsl_plus_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			
+		}
+
+		//Forwardslash: -
+		if(forsl_neg_direction(size, board, row, col, disc)) {
+			//Recursively place pieces until disc found
+			
+		}
+		
+
 	}
 	
 }
