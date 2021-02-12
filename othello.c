@@ -41,7 +41,7 @@ void initializeBoard(int size, char board[][size])
 			board[i][j] = EMPTY;
 		}
 	}
-	//Init starting board discs (SIZE = 8 ONLY)
+	//Init starting board discs
 	board[size/2 - 1][size/2 - 1] = BLACK;
 	board[size/2 - 1][size/2] = WHITE;
 	board[size/2][size/2 - 1] = WHITE;
@@ -231,22 +231,22 @@ bool isValidMove(int size, char board[][size], int row, int col, char disc)
 	}
 	//Use static direction functions to check if a valid move is available at row, col
 	if(left_direction(size, board, row, col, disc)) {
-		printf("I got my diamond tester...ICE\n");
+		//printf("I got my diamond tester...ICE\n");
 		return true;
 	}
 	//Right check
 	if(right_direction(size, board, row, col, disc)) {
-		printf("I got my qmond tester...ICE\n");
+		//printf("I got my qmond tester...ICE\n");
 		return true;
 	}
 	//Up check
 	if(up_direction(size, board, row, col, disc)) {
-		printf("I got my dgdmond tester...ICE\n");
+		//printf("I got my dgdmond tester...ICE\n");
 		return true;
 	}
 	//Down check
 	if(down_direction(size, board, row, col, disc)) {
-		printf("I got my ddsmond tester...ICE\n");
+		//printf("I got my ddsmond tester...ICE\n");
 		return true;
 	}
 	/*
@@ -380,6 +380,7 @@ bool isValidMoveAvailable(int size, char board[][size], char disc)
 // Returns true if the board is fully occupied with discs; false otherwise
 bool isBoardFull(int size, char board[][size])
 {
+	//Checks for empty tiles, if none then return true
 	for(int i = 0; i < size; i++) {
 		for(int j = 0; j < size; j++) {
 			if(board[i][j] == EMPTY) {
