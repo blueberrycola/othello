@@ -55,7 +55,7 @@ static bool check_dir(int size, char board[][size], int row, int col, char disc,
     bool done = false;
     int r = row + paramR;
     int c = col + paramC;
-    //Since the a matching disc has been found
+    //Since a matching disc has been found already to call check_dir all we must find is the matching disc
     while(!done) {
   //      printf("Checking %d, %d\n", r+1, c+1);
         if(paramR == 1) {
@@ -98,7 +98,6 @@ static bool check_dir(int size, char board[][size], int row, int col, char disc,
             done = true;
         }
     }
-   // printf("We got problems\n");
     
     return false;
 }
@@ -106,7 +105,7 @@ static bool check_dir(int size, char board[][size], int row, int col, char disc,
 // Returns true if moving the disc to location row,col is valid; false otherwise
 bool isValidMove(int size, char board[][size], int row, int col, char disc)
 {
-	// Check North, east, south, west
+	// Check each direction for the pattern needed for a discs to be flipped
     bool maincheck = false;
     //Up direction: row--
     if(row-1 > 0 && board[row-1][col] != EMPTY && board[row-1][col] != disc) {
@@ -328,7 +327,7 @@ bool isValidMoveAvailable(int size, char board[][size], char disc)
 		for(int j = 0; j < size; j++) {
 			if(board[i][j] == EMPTY) {
 				if(isValidMove(size, board, i, j, disc) && i < size && j < size) {
-				    printf("VALID MOVES FOUND for %c at %d, %d \n", disc, i + 1, j + 1);
+				    //printf("VALID MOVES FOUND for %c at %d, %d \n", disc, i + 1, j + 1);
 				    validMove = true;
 				}
 			}
